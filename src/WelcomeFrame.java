@@ -1,5 +1,14 @@
 
 import Data.DataConnection;
+import Reservations.AddEditReservationDialog;
+import Reservations.ReservationInfo;
+import Reservations.ReservationService;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import javax.swing.table.DefaultTableModel;
 
  
 
@@ -24,30 +33,66 @@ public class WelcomeFrame extends javax.swing.JFrame {
     public WelcomeFrame() {
         
         DataConnection.connection();
-        initComponents();
-        
+        initComponents(); 
         LoadPanels();
         HidePanels();
+        LoadCurrentTime();
+        LoadReservationsToday();
     }
     
     private void LoadPanels()
     {
-       
-         
         reservationFrame = new ReservationsFrame();
-        reservationFrame.setSize(1349, 675);
+        reservationFrame.setSize(640, 440);
         
         addReservationFrame = new AddReservationFrame();
-        addReservationFrame.setSize(1349, 675);
+        addReservationFrame.setSize(640, 440);
         
         customerFrame = new CustomersFrame();
-        customerFrame.setSize(1349, 675);
+        customerFrame.setSize(640, 440);
     }
     private void HidePanels()
     {
         reservationFrame.setVisible(false);
         addReservationFrame.setVisible(false);
         customerFrame.setVisible(false);
+    }
+    private void LoadCurrentTime(){
+    
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");         
+        Thread clock = new Thread() {
+            public void run(){
+                for(;;) { 
+                    Date date = new Date();     
+                    lblCurrentDateAndTime.setText(formatter.format(date));
+                    try {
+                        sleep(1000);
+                    }
+                    catch(InterruptedException ex){
+                    
+                    }
+                }
+            }
+        };
+        clock.start();
+    }
+    
+    private void LoadReservationsToday() {
+    
+        SimpleDateFormat formatter = new SimpleDateFormat("ddMMyyyy");  
+        ReservationService.Load();
+        DefaultTableModel tableModel = (DefaultTableModel)tblReservations.getModel();
+        tableModel.setRowCount(0);
+        ArrayList<ReservationInfo> reservations = ReservationService.GetList();
+        for(ReservationInfo reservation :  reservations) { 
+            if(new Date() != reservation.getReserveDate())
+            {
+                continue;
+            }
+            
+            tableModel.insertRow(tableModel.getRowCount(), new Object[] {reservation.getCustomer().getName()});
+        }
+    
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -60,17 +105,35 @@ public class WelcomeFrame extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        backbonePanel = new javax.swing.JPanel();
+        lblCurrentDateAndTime = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblReservations = new javax.swing.JTable();
         viewReservationButton = new javax.swing.JButton();
         newReservationButton = new javax.swing.JButton();
         viewCustomersButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(640, 440));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 3, 36)); // NOI18N
         jLabel1.setText("Welcome to my Guest House");
 
         jLabel2.setText("Arriving Guest Today");
+
+        lblCurrentDateAndTime.setText("current date");
+
+        tblReservations.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null},
+                {null},
+                {null},
+                {null}
+            },
+            new String [] {
+                "Name"
+            }
+        ));
+        jScrollPane1.setViewportView(tblReservations);
 
         viewReservationButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         viewReservationButton.setText("View Reservations");
@@ -96,59 +159,50 @@ public class WelcomeFrame extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout backbonePanelLayout = new javax.swing.GroupLayout(backbonePanel);
-        backbonePanel.setLayout(backbonePanelLayout);
-        backbonePanelLayout.setHorizontalGroup(
-            backbonePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(backbonePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(backbonePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(viewReservationButton, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(newReservationButton, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(viewCustomersButton, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        backbonePanelLayout.setVerticalGroup(
-            backbonePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(backbonePanelLayout.createSequentialGroup()
-                .addGap(23, 23, 23)
-                .addComponent(viewReservationButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(46, 46, 46)
-                .addComponent(newReservationButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(59, 59, 59)
-                .addComponent(viewCustomersButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(37, Short.MAX_VALUE))
-        );
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
-                        .addContainerGap())))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(backbonePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(37, 37, 37)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(viewReservationButton, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(viewCustomersButton, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(newReservationButton, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblCurrentDateAndTime, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(30, 30, 30)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel2)
-                .addGap(71, 71, 71)
-                .addComponent(backbonePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(lblCurrentDateAndTime))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(newReservationButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(49, 49, 49)
+                        .addComponent(viewReservationButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(35, 35, 35)
+                        .addComponent(viewCustomersButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(803, 803, 803))
         );
 
         pack();
@@ -166,7 +220,8 @@ public class WelcomeFrame extends javax.swing.JFrame {
 
     private void newReservationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newReservationButtonActionPerformed
         // TODO add your handling code here: 
-        addReservationFrame.setVisible(true);
+        //addReservationFrame.setVisible(true);
+        new AddEditReservationDialog(this, true, true).setVisible(true);
     }//GEN-LAST:event_newReservationButtonActionPerformed
 
     /**
@@ -203,10 +258,12 @@ public class WelcomeFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel backbonePanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblCurrentDateAndTime;
     private javax.swing.JButton newReservationButton;
+    private javax.swing.JTable tblReservations;
     private javax.swing.JButton viewCustomersButton;
     private javax.swing.JButton viewReservationButton;
     // End of variables declaration//GEN-END:variables

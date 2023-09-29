@@ -43,7 +43,9 @@ public class CustomerInfo {
     public int getId() {
         return id;
     }
-     
+    public String getName() {
+        return firstname + " " + lastname;
+    }
     public String getFirstname() {
         return firstname;
     }
