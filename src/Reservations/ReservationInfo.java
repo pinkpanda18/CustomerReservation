@@ -18,11 +18,11 @@ public class ReservationInfo {
     private CustomerInfo customer;
     private Date reservedate;
     
-    public ReservationInfo(int id, int customerid, String datereserve){
+    public ReservationInfo(int id, int customerid, Date datereserve){
     
         this.Id = id;
         this.customerid = customerid;
-        this.reservedate = new Date(datereserve);
+        this.reservedate = datereserve;
     }
     
     public ReservationInfo(int id, CustomerInfo customer, Date reserveon){

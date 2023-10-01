@@ -34,11 +34,11 @@ public class ReservationService {
              int customerid = Integer.parseInt(resultSet.getObject("customerid").toString());
              //get customerDetails
              CustomerInfo customer = CustomerService.searchByID(customerid);
-            reservations.add(new ReservationInfo(Integer.parseInt(resultSet.getObject("id").toString()), 
+            reservations.add(new ReservationInfo(resultSet.getInt("id"), 
                     customer,
                     //resultSet.getObject("reservedate").toString())
-                    new Date(Long.parseLong(resultSet.getObject("reservedate").toString()))
-                    ));
+                    resultSet.getDate("reservedate"))
+                    );
             }
             System.out.println("loaded with size of " + reservations.size());
         }

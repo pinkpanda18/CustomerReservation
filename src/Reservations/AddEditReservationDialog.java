@@ -11,6 +11,7 @@ import java.awt.Component;
 import java.awt.HeadlessException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
@@ -29,9 +30,11 @@ public class AddEditReservationDialog extends javax.swing.JDialog {
      */
     
      CustomerInfo selectedCustomer;
+     java.awt.Frame parentFrame;
      Boolean Add = false;
     public AddEditReservationDialog(java.awt.Frame parent, boolean modal, boolean isAdd) {
         super(parent, modal);
+        this.parentFrame = parent;
         initComponents();
         Add = isAdd;
         LoadCustomers();
@@ -163,6 +166,7 @@ public class AddEditReservationDialog extends javax.swing.JDialog {
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
         // TODO add your handling code here:
+         parentFrame.setVisible(true);
          this.dispose();
     }//GEN-LAST:event_btnCancelActionPerformed
 
@@ -178,12 +182,11 @@ public class AddEditReservationDialog extends javax.swing.JDialog {
         // TODO add your handling code here:
          try {    
              
-            if(Add) {
-                String date = jDateReserve.getDate().toString();
-                ReservationInfo reservation = new ReservationInfo(0, selectedCustomer.getId(), date);
+            if(Add) { 
+                ReservationInfo reservation = new ReservationInfo(0, selectedCustomer.getId(), jDateReserve.getDate());
                 ReservationService.Save(reservation);
                 JOptionPane.showMessageDialog(null,"Record Saved."); 
-                
+                btnCancelActionPerformed(null);
             }
             else {
 //                customerInfo.setFirstname(firstname);
