@@ -18,15 +18,16 @@ public class CustomerInfo {
     private String address;
     private String dob;
     private String phone;
-    private byte[] pic;
+    private byte[] photo;
     private String email;
     private ByteArrayOutputStream img;
     
-    public CustomerInfo(int id, String firstname, String lastname, String dob){
+    public CustomerInfo(int id, String firstname, String lastname, String dob, byte[] photo){
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
         this.dob = dob;
+        this.photo = photo;
     }
     
     public void setId(int id) {
@@ -40,6 +41,10 @@ public class CustomerInfo {
         this.lastname = lastname;
     }
     
+    public void setPic(byte[] pic) {
+        this.photo = pic;  
+    }
+    
     public int getId() {
         return id;
     }
@@ -51,5 +56,13 @@ public class CustomerInfo {
     }
     public String getLastname() {
         return lastname;
+    }
+    
+    public byte [] getPic()
+    {
+        if(img != null)
+             return img.toByteArray();
+        else 
+            return photo;
     }
 }

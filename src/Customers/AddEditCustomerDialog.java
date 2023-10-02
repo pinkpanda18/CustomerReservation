@@ -6,10 +6,18 @@ package Customers;
 
 import Data.DataConnection;
 import java.awt.HeadlessException;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -22,12 +30,20 @@ public class AddEditCustomerDialog extends javax.swing.JDialog {
      */
     CustomerInfo customerInfo;
     boolean Add = false; 
+    JFileChooser fileChooser = null;
+    FileNameExtensionFilter filter = null;
+    ByteArrayOutputStream byteImg;
+    BufferedImage bufferImg;
+    
     public AddEditCustomerDialog(java.awt.Frame parent, boolean modal, CustomerInfo customer, boolean isAdd) {
         super(parent, modal); 
         initComponents();
         this.customerInfo = customer;
         this.Add = isAdd;
         InitializeForm();
+        fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        filter = new FileNameExtensionFilter("*.IMAGE", "jpg","gif","png");
     }
     
     private void InitializeForm(){
@@ -56,6 +72,8 @@ public class AddEditCustomerDialog extends javax.swing.JDialog {
         txtLastname = new javax.swing.JTextField();
         btnSave = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
+        btnBrowsePhoto = new javax.swing.JButton();
+        lblPicture = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -79,6 +97,15 @@ public class AddEditCustomerDialog extends javax.swing.JDialog {
             }
         });
 
+        btnBrowsePhoto.setText("Browse");
+        btnBrowsePhoto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBrowsePhotoActionPerformed(evt);
+            }
+        });
+
+        lblPicture.setText("jLabel1");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -86,6 +113,10 @@ public class AddEditCustomerDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addGap(33, 33, 33)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(lblPicture, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnBrowsePhoto)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -103,14 +134,18 @@ public class AddEditCustomerDialog extends javax.swing.JDialog {
                                 .addComponent(btnSave)
                                 .addGap(45, 45, 45)))
                         .addComponent(btnCancel)))
-                .addContainerGap(97, Short.MAX_VALUE))
+                .addContainerGap(148, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(15, 15, 15)
                 .addComponent(lblTitle)
-                .addGap(49, 49, 49)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lblPicture, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE)
+                .addGap(12, 12, 12)
+                .addComponent(btnBrowsePhoto)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtFirstname, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -118,7 +153,7 @@ public class AddEditCustomerDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(txtLastname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
+                .addGap(75, 75, 75)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSave)
                     .addComponent(btnCancel))
@@ -134,10 +169,11 @@ public class AddEditCustomerDialog extends javax.swing.JDialog {
             String firstname = txtFirstname.getText();
             String lastname = txtLastname.getText();
             if(Add) {
-                CustomerInfo customer = new CustomerInfo(0, firstname, lastname, "");
+                byteImg = new ByteArrayOutputStream();
+                ImageIO.write(bufferImg, "jpg", byteImg);
+                CustomerInfo customer = new CustomerInfo(0, firstname, lastname, "",byteImg.toByteArray());
                 CustomerService.Save(customer);
                 JOptionPane.showMessageDialog(null,"Record Saved."); 
-                
             }
             else {
                 customerInfo.setFirstname(firstname);
@@ -150,6 +186,9 @@ public class AddEditCustomerDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "Not Saved something went wrong.");
         } catch (SQLException ex) {
             Logger.getLogger(AddEditCustomerDialog.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(AddEditCustomerDialog.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Image file is empty!");
         }
     }//GEN-LAST:event_btnSaveActionPerformed
 
@@ -157,6 +196,22 @@ public class AddEditCustomerDialog extends javax.swing.JDialog {
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_btnCancelActionPerformed
+
+    private void btnBrowsePhotoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBrowsePhotoActionPerformed
+        // TODO add your handling code here:
+        
+        fileChooser.addChoosableFileFilter(filter);
+        fileChooser.showOpenDialog(null);
+
+        try {
+            bufferImg = ImageIO.read(fileChooser.getSelectedFile());
+            lblPicture.setIcon(new ImageIcon(bufferImg.getScaledInstance(lblPicture.getWidth(), lblPicture.getHeight(), 1)));
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "No File Selected");
+        }
+        
+        
+    }//GEN-LAST:event_btnBrowsePhotoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -202,10 +257,12 @@ public class AddEditCustomerDialog extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBrowsePhoto;
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnSave;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel lblPicture;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JTextField txtFirstname;
     private javax.swing.JTextField txtLastname;

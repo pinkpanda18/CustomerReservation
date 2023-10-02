@@ -27,9 +27,11 @@ public class CustomerService {
                        
         try{
             while(resultSet.next()){
-            customers.add(new CustomerInfo(Integer.parseInt(resultSet.getObject(1).toString()), 
-                    resultSet.getObject(2).toString(), 
-                     resultSet.getObject(3).toString(), ""));
+            customers.add(new CustomerInfo(Integer.parseInt(resultSet.getObject("id").toString()), 
+                    resultSet.getObject("firstname").toString(), 
+                    resultSet.getObject("lastname").toString(),
+                    "",
+                    resultSet.getBytes("photo")));
             }
             System.out.println("loaded with size of " + customers.size());
         }
@@ -83,11 +85,12 @@ public class CustomerService {
      {       
         try {
               
-        PreparedStatement ps=  DataConnection.getPreStatement("insert into customers(firstname, lastname, createdon)" +
-                 "values ( ?,?,?)");
+        PreparedStatement ps=  DataConnection.getPreStatement("insert into customers(firstname, lastname,photo, createdon)" +
+                 "values ( ?,?,?,?)");
          ps.setString(1, customer.getFirstname());
          ps.setString(2, customer.getLastname());
-         ps.setTimestamp(3, new java.sql.Timestamp(new Date().getTime()));
+         ps.setBytes(3, customer.getPic());
+         ps.setTimestamp(4, new java.sql.Timestamp(new Date().getTime()));
 
          ps.execute();
          clearArray(); //clear array to reset values

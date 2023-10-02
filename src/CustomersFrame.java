@@ -191,8 +191,8 @@ public class CustomersFrame extends javax.swing.JFrame {
         selectedCustomer = new CustomerInfo(Integer.parseInt(model.getValueAt(index,0).toString()),
                 model.getValueAt(index,1).toString(),
                 model.getValueAt(index,2).toString(),
-                ""
-        );
+                "",
+                null);
         //String firstname = model.getValueAt(index,1).toString();
         //JOptionPane.showMessageDialog(null,firstname);
         btnUpdate.setVisible(true);

@@ -3,11 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/glai_storage/Java_Projects/CustomerReservation/src/Reservations/AddEditReservationDialog.java</file>
+            <file>file:/D:/glai_storage/Java_Projects/CustomerReservation/src/ReservationsFrame.java</file>
+            <file>file:/D:/glai_storage/Java_Projects/CustomerReservation/src/Customers/AddEditCustomerDialog.java</file>
             <file>file:/D:/glai_storage/Java_Projects/CustomerReservation/src/CustomersFrame.java</file>
-            <file>file:/D:/glai_storage/Java_Projects/CustomerReservation/src/Reservations/ReservationService.java</file>
+            <file>file:/D:/glai_storage/Java_Projects/CustomerReservation/src/Customers/CustomerInfo.java</file>
+            <file>file:/D:/glai_storage/Java_Projects/CustomerReservation/src/Customers/CustomerService.java</file>
             <file>file:/D:/glai_storage/Java_Projects/CustomerReservation/src/WelcomeFrame.java</file>
-            <file>file:/D:/glai_storage/Java_Projects/CustomerReservation/src/Reservations/ReservationInfo.java</file>
         </group>
     </open-files>
 </project-private>
